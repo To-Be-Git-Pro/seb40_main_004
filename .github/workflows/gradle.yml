@@ -19,30 +19,8 @@ env:
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: morak-group
 
 jobs:
-  # Label of the container job
-  container-job:
-    # Containers must run in Linux based operating systems
-    runs-on:
-      - gprunner
-      - m5a.large
-    # Docker Hub image that `container-job` executes in
-    container:
-      image: harbor.address/devops/actions/base:latest
-      credentials:
-        username: ${{ secrets.DOCKER_ID }}
-        password: ${{ secrets.DOCKER_PW }}
-    # Service containers to run with `container-job`
-    services:
-      # Label used to access the service container
-      redis-host:
-        # Docker Hub image
-        image: redis
-
-
   build:
     runs-on: ubuntu-latest
-
-
     
     steps:
     - uses: actions/checkout@v3
@@ -76,16 +54,6 @@ jobs:
         cloud.aws.credentials.secretKey: ${{ secrets.AWS_SECRET_KEY }}
         cloud.aws.s3.bucket: ${{ secrets.AWS_IMAGE_BUCKET_NAME }}
     
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew 
-      working-directory: ./server/morak_back_end/
-      shell: bash
-      
-        # [2] build
-    - name: Build with Gradle
-      run: ./gradlew build
-      working-directory: ./server/morak_back_end/
-      shell: bash
 
         # [3] save build
     - name: Make zip file
