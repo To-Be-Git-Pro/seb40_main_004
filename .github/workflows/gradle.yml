@@ -51,12 +51,14 @@ jobs:
     
     - name: Grant execute permission for gradlew
       run: chmod +x ./server/morak_back_end/gradlew
+      working-directory: ./server/morak_back_end/
       shell: bash
        
 
         # [2] build
     - name: Build with Gradle
-      run: ./server/morak_back_end/gradlew build -x test
+      run: ./gradlew build -x test
+      working-directory: ./server/morak_back_end/
       shell: bash
       
     - name: Cleanup Gradle Cache
