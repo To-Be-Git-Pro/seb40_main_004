@@ -55,7 +55,7 @@ jobs:
         cloud.aws.s3.bucket: ${{ secrets.AWS_IMAGE_BUCKET_NAME }}
         
             
-    - name: Setup Gradle
+    - name: Setup Gradle 
       uses: gradle/gradle-build-action@v2
     
     - name: Execute Gradle build
