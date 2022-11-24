@@ -19,8 +19,30 @@ env:
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: morak-group
 
 jobs:
+  # Label of the container job
+  container-job:
+    # Containers must run in Linux based operating systems
+    runs-on:
+      - gprunner
+      - m5a.large
+    # Docker Hub image that `container-job` executes in
+    container:
+      image: harbor.address/devops/actions/base:latest
+      credentials:
+        username: bot@hpcnt.com
+        password: ${{ secrets.BOT_PASSWORD }}
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      redis-host:
+        # Docker Hub image
+        image: redis
+
+
   build:
     runs-on: ubuntu-latest
+
+
     
     steps:
     - uses: actions/checkout@v3
