@@ -21,7 +21,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+    env:
+      working-directory: ./server/morak_back_end
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
