@@ -53,9 +53,9 @@ jobs:
         cloud.aws.credentials.secretKey: ${{ secrets.AWS_SECRET_KEY }}
         cloud.aws.s3.bucket: ${{ secrets.AWS_IMAGE_BUCKET_NAME }}
         working-directory: ./server/morak_back_end
-    - name: Validate Gradle wrapper
-      uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b        
-            
+        
+    - name: Look for gradlew
+      run: find / -type f -name "gradlew"            
 
     - name: make gradlew 
       run: chmod +x ./gradlew
