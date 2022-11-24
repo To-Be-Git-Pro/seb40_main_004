@@ -29,8 +29,8 @@ jobs:
     container:
       image: harbor.address/devops/actions/base:latest
       credentials:
-        username: bot@hpcnt.com
-        password: ${{ secrets.BOT_PASSWORD }}
+        username: ${{ secrets.DOCKER_ID }}
+        password: ${{ secrets.DOCKER_PW }}
     # Service containers to run with `container-job`
     services:
       # Label used to access the service container
