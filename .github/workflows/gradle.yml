@@ -62,11 +62,13 @@ jobs:
     
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew 
+      working-directory: ./server/morak_back_end/
       shell: bash
-
+      
         # [2] build
     - name: Build with Gradle
       run: ./gradlew build
+      working-directory: ./server/morak_back_end/
       shell: bash
 
         # [3] save build
