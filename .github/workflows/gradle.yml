@@ -12,8 +12,13 @@ on:
     branches:
       - 'main'
 
-permissions:
-  contents: read
+env:
+  S3_BUCKET_NAME: morak
+  RESOURCE_PATH: ./server/morak_back_end//src/main/resources/application.yml
+  CODE_DEPLOY_APPLICATION_NAME: morak
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: morak-group
+
+
 
 jobs:
   build:
@@ -30,42 +35,62 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-    
-    - uses: actions/checkout@v2
-    - run: touch ./server/morak_back_end/src/main/resources/application.yml
-    - run: echo "${{ secrets.APPLICATION_MAIN }}" > application.yml
-
-    - uses: actions/upload-artifact@v2
+       # [1] application.yml 생성
+    - name: Set yaml file 
+      uses: microsoft/variable-substitution@v1
       with:
-        name: application.yml
-        path: ./server/morak_back_end/src/main/resources/application.yml
-    
-    - uses: actions/checkout@v2
-    - run: touch ./server/morak_back_end/src/test/java/com/morakmorak/morak_back_end/resources/application_test.yml
-    - run: echo "${{ secrets.APPLICATION_TEST }}" > application_test.yml
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: application_test.yml
-        path: ./server/morak_back_end/src/test/java/com/morakmorak/morak_back_end/resources/application_test.yml
+        files: ${{ env.RESOURCE_PATH }} 
+      env:
+        spring.datasource.url: ${{ secrets.RDS_URL }}
+        spring.datasource.username: ${{ secrets.RDS_ID }}
+        spring.datasource.password: ${{ secrets.RDS_PASSWORD }}
+        spring.redis.host: ${{ secrets.REDIS_URL }}
+        spring.redis.port: ${{ secrets.REDIS_PORT }}
+        spring.mail.host: ${{ secrets.MAIL_HOST }}
+        spring.mail.port: ${{ secrets.MAIL_PORT }}
+        spring.mail.username: ${{ secrets.MAIL_ID }}
+        spring.mail.password: ${{ secrets.MAIL_PASSWORD }}
+        spring.security.oauth2.client.registration.github.client-id: aaaasadsadsadsad
+        spring.security.oauth2.client.registration.github.password: saadsadasdsadsadsa
+        spring.security.oauth2.client.registration.google.client-id: sadasdasdsadasddasdas
+        spring.security.oauth2.client.registration.google.password: sadsadsadsadsadsadsadsa
+        jwt.secretKey: ${{ secrets.SECURITY_SECRET_KEY }}
+        jwt.refreshKey: ${{ secrets.SECURITY_REFRESH_KEY }}
+        cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
+        cloud.aws.credentials.secretKey: ${{ secrets.AWS_SECRET_KEY }}
+        cloud.aws.s3.bucket: ${{ secrets.AWS_IMAGE_BUCKET_NAME }}
     
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      working-directory: ./server/morak_back_end/
+      run: chmod +x ./gradlew 
       shell: bash
-       
 
         # [2] build
     - name: Build with Gradle
-      run: ./gradlew build 
-      working-directory: ./server/morak_back_end/
+      run: ./gradlew build
       shell: bash
-      
-    - name: Cleanup Gradle Cache
-      if: ${{ always() }}
-      run: |
-          rm -f ~/.gradle/caches/modules-2/modules-2.lock
-          rm -f ~/.gradle/caches/modules-2/gc.properties
-          
 
+        # [3] save build
+    - name: Make zip file
+      run: zip -r ./$GITHUB_SHA.zip .
+      shell: bash
 
+        # [4] aws 권한
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }} 
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+        aws-region: ap-northeast-2
+
+        # [5] upload
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+
+        # [6] deploy
+    - name: Code Deploy
+      run: | 
+        aws deploy create-deployment \
+        --deployment-config-name CodeDeployDefault.AllAtOnce \
+        --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+        --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+        --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
