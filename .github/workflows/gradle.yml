@@ -50,7 +50,7 @@ jobs:
         path: ./server/morak_back_end/src/test/java/com/morakmorak/morak_back_end/resources/application.yml
     
     - name: Grant execute permission for gradlew
-      run: chmod +x ./server/morak_back_end/gradlew
+      run: chmod +x gradlew
       working-directory: ./server/morak_back_end/
       shell: bash
        
