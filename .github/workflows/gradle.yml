@@ -57,6 +57,10 @@ jobs:
             
     - name: Setup Gradle 
       uses: gradle/gradle-build-action@v2
+      
+    - name: Validate Gradle wrapper
+      uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+        
     - name: make gradlew 
       run: chmod +x ./gradlew
     
@@ -64,7 +68,7 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
-        build-root-directory: ./server/morak_back_end/
+        build-root-directory: ./server/morak_back_end
         
       # [3] save build
     - name: Make zip file
