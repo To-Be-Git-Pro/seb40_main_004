@@ -53,7 +53,18 @@ jobs:
         cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS_KEY }}
         cloud.aws.credentials.secretKey: ${{ secrets.AWS_SECRET_KEY }}
         cloud.aws.s3.bucket: ${{ secrets.AWS_IMAGE_BUCKET_NAME }}
+        
+            
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
     
+    - name: Execute Gradle build
+      run: ./gradlew build
+    - uses: gradle/gradle-build-action@v2
+      with:
+        arguments: build
+        build-root-directory: ./server/morak_back_end/
+        
       # [3] save build
     - name: Make zip file
       run: zip -r ./$GITHUB_SHA.zip .
