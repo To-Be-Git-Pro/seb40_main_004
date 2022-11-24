@@ -56,7 +56,7 @@ jobs:
 
         # [2] build
     - name: Build with Gradle
-      run: /server/morak_back_end/.gradlew build -x test
+      run: ./seb40_main_004/server/morak_back_end/gradlew build -x test
       shell: bash
       
     - name: Cleanup Gradle Cache
