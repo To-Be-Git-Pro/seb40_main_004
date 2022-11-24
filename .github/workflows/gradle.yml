@@ -18,16 +18,10 @@ env:
   CODE_DEPLOY_APPLICATION_NAME: morak
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: morak-group
 
-
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    env :
-      working-directory: ./server/morak_back_end/
-      APPLICATION: ${{ secrets.APPLICATION_MAIN }}
-      APPLICATION_TEST: ${{ secrets.APPLICATION_TEST }}
-
+    
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
