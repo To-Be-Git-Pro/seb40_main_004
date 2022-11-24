@@ -43,7 +43,6 @@ jobs:
     - uses: actions/checkout@v2
     - run: touch ./server/morak_back_end/src/test/java/com/morakmorak/morak_back_end/resources/application_test.yml
     - run: echo "${{ secrets.APPLICATION_TEST }}" > application_test.yml
-    - path: 
 
     - uses: actions/upload-artifact@v2
       with:
