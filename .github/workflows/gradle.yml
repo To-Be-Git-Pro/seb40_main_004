@@ -13,7 +13,7 @@ on:
       - 'main'
 
 env:
-  S3_BUCKET_NAME: morak
+  S3_BUCKET_NAME: morakmorak
   RESOURCE_PATH: ./server/morak_back_end/src/main/resources/application.yml
   CODE_DEPLOY_APPLICATION_NAME: morak
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: morak-group
